@@ -1,0 +1,4 @@
+check argc is equal to 2
+check key is 26 characters in length
+check all characters are alphabetic
+check there are no repeated characters
