@@ -12,11 +12,11 @@
 // Checks if the user has supplied a command line argument
 void check_args(int args);
 
-// Checks that two letters are the same, ignoring case
-int same_letter(char a, char b);
-
 // Checks if a proposed key contains any non-alphabetic characters
 int contains_nonalpha(string str);
+
+// Checks if two letters are the same, ignoring case
+int same_letter(char a, char b);
 
 // Checks if a proposed key has any duplicate letters
 int contains_duplicates(string str);
