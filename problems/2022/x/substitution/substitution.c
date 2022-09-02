@@ -193,7 +193,7 @@ int letter_index(char a)
  * 
  * @param txt The plaintext supplied by the user.
  * @param secret An empty char array same size as txt to hold the ciphertext.
- * @param key Theencryption key
+ * @param key The encryption key
  */
 void encrypt(string txt, string key, char secret[])
 {
@@ -216,7 +216,7 @@ void encrypt(string txt, string key, char secret[])
         }
         else
         {
-            // Or else this is whitespace or punctuation, no need to substitute
+            // This is whitespace or punctuation, no need to substitute
             secret[i++] = *txt;
         }
         ++txt;
