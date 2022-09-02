@@ -149,7 +149,7 @@ int same_letter(char a, char b)
  * 
  * Key must conform to the following:
  *  - Must contain exactly 26 characters
- *  - Must contain only alphabetic letters
+ *  - Must contain only letters
  *  - Letters must occur only once
  * 
  * @param str a user supplied string to validate.
@@ -175,7 +175,7 @@ void validate_key(string str)
 
 /**
  * Gets the 0 based index of a letter, where Aa = 0, Bb = 1, and so on. Assumes the
- * provided char will actually be alphabetic.
+ * char is actually a letter.
  * 
  * @param a An alphabetic character.
  * @return int The 0 based index of the character.
