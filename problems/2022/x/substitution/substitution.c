@@ -183,7 +183,7 @@ void validate_key(string str)
 int letter_index(char a)
 {
     return 
-        // If the letter is upper, subtract the value of 'A', if not subtract 'a'
+        // If the letter is upper, subtract 'A', if not subtract 'a'
         isupper(a) ? (a - 'A') : (a - 'a');
 }
 
