@@ -1,0 +1,46 @@
+!!!PRETTY PLEASE PRETTY PRINT THIS!!!
+
+./sort1 :  random5000.txt : runs in  0.06347417831420898
+./sort1 :  random10000.txt : runs in  0.20856809616088867
+./sort1 :  random50000.txt : runs in  5.086806297302246
+
+./sort1 :  reversed5000.txt : runs in  0.07107806205749512
+./sort1 :  reversed10000.txt : runs in  0.18619966506958008
+./sort1 :  reversed50000.txt : runs in  3.636920928955078
+
+./sort1 :  sorted5000.txt : runs in  0.0040128231048583984
+./sort1 :  sorted10000.txt : runs in  0.0058803558349609375
+./sort1 :  sorted50000.txt : runs in  0.029813289642333984
+
+-------------------------------------------------------------------------
+
+./sort2 :  random5000.txt : runs in  0.005927085876464844
+./sort2 :  random10000.txt : runs in  0.008670806884765625
+./sort2 :  random50000.txt : runs in  0.024671316146850586
+
+./sort2 :  reversed5000.txt : runs in  0.001714944839477539
+./sort2 :  reversed10000.txt : runs in  0.004534721374511719
+./sort2 :  reversed50000.txt : runs in  0.01895594596862793
+
+./sort2 :  sorted5000.txt : runs in  0.0017330646514892578
+./sort2 :  sorted10000.txt : runs in  0.0035326480865478516
+./sort2 :  sorted50000.txt : runs in  0.016733646392822266
+
+--------------------------------------------------------------------------
+
+./sort3 :  random5000.txt : runs in  0.029617786407470703
+./sort3 :  random10000.txt : runs in  0.1095583438873291
+./sort3 :  random50000.txt : runs in  1.9195868968963623
+
+./sort3 :  reversed5000.txt : runs in  0.0502166748046875
+./sort3 :  reversed10000.txt : runs in  0.12256717681884766
+./sort3 :  reversed50000.txt : runs in  1.9311268329620361
+
+./sort3 :  sorted5000.txt : runs in  0.04805302619934082
+./sort3 :  sorted10000.txt : runs in  0.12097001075744629
+./sort3 :  sorted50000.txt : runs in  1.9210264682769775
+
+---- NESTED LISTS FOR SORT RESULTS? -----
+[[sort1, [random1, random2, random3], [rev1, rev2, rev3], [srtd1, srtd2, srtd3]],
+[sort2, [random1, random2, random3], [rev1, rev2, rev3], [srtd1, srtd2, srtd3]],
+[sort3, [random1, random2, random3], [rev1, rev2, rev3], [srtd1, srtd2, srtd3]]]

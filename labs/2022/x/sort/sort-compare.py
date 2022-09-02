@@ -1,3 +1,4 @@
+from ossaudiodev import SOUND_MIXER_DIGITAL1
 import subprocess
 import os
 import time
@@ -25,4 +26,3 @@ for algo in algos:
         elapsed = time.time() - now
         print(algo, ': ', sorted, ': runs in ', elapsed)
     print()
-    
