@@ -203,7 +203,7 @@ void encrypt(string txt, string key, char secret[])
         // If this char is a letter, perform substitution
         if(isalpha(*txt))
         {
-            // Get the next letter from the correct index of the key
+            // Get the next letter from the cipher key
            char next_char = *(key + letter_index(*txt));
            if(isupper(*txt))
             {
@@ -221,6 +221,6 @@ void encrypt(string txt, string key, char secret[])
         }
         ++txt;
     }
-    // Add the trailing null byte and now we have a valid ciphertext string!
+    // Add the terminating null byte and POOF it's a string!!
     secret[i] = '\0';
 }
