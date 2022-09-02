@@ -24,9 +24,6 @@ int contains_duplicates(string str);
 // Validates the proposed cipher key. Terminates program if key is invalid
 void validate_key(string str);
 
-// Generates the cipher key from the provided key string
-void generate_key(string str, char key[]);
-
 // Gets the key index of a letter
 int letter_index(char a);
 
