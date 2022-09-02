@@ -28,7 +28,7 @@ void validate_key(string str);
 void generate_key(string str, char key[]);
 
 // Gets the key index of a letter
-int get_index(char a);
+int letter_index(char a);
 
 // Encrypts plaintext using the provided cipher key
 void encrypt(string txt, char secret[], char key[]);
@@ -44,21 +44,16 @@ int main(int argc, char *argv[])
     // Check key is valid
     validate_key(argv[1]);
 
-    // Generate a cipher key
-    char cipher_key[26];
-    generate_key(argv[1], cipher_key);
-
     // Get text to encrypt from user
     string plaintext = get_string("plaintext: ");
 
     // Encrypt the text provided by the user
     char ciphertext[strlen(plaintext) + 1];
-    encrypt(plaintext, ciphertext, cipher_key);
+    encrypt(plaintext, ciphertext, argv[1]);
 
     // Print back the encrypted text
     printf("ciphertext: %s\n", ciphertext);
 }
-
 
 
 
@@ -83,9 +78,6 @@ void check_args(int args)
     }
 }
 
-
-
-
 /**
  * Checks if a user supplied string contains any characters that are not letters.
  * 
@@ -104,9 +96,6 @@ int contains_nonalpha(string str)
     }
     return 0;
 }
-
-
-
 
 /**
  * Checks if a string contains any letters more than once. Assumes the string
@@ -133,9 +122,6 @@ int contains_duplicates(string str)
     return 0;
 }
 
-
-
-
 /**
  * Checks if two letters are the same, regardless of case.
  * 
@@ -158,9 +144,6 @@ int same_letter(char a, char b)
         return a == b;
     }
 }
-
-
-
 
 /**
  * Performs a sequence of checks to validate that a user supplied string can be
@@ -193,38 +176,6 @@ void validate_key(string str)
     }
 }
 
-
-
-
-/**
- * Generates a cipher key from a user supplied string. Assumes string has already been validated.
- * This step is performed primarily to ensure the key only contains uppercase letters to reduce the
- * amount of checks needed when running the encryption algorithm.
- * 
- * @param str A user supplied string that has been validated.
- * @param key char key[] is a char array containing exactly 26 elements.
- */
-void generate_key(string str, char key[])
-{
-    int i = 0;
-
-    while(*str != '\0')
-    {
-        if(isupper(*str))
-        {
-            key[i++] = *str++;
-        }
-        // If letter is not uppercase already, force it to upper
-        else
-        {
-            key[i++] = toupper(*str++);
-        }
-    }
-}
-
-
-
-
 /**
  * Gets the 0 based index of a letter, where Aa = 0, Bb = 1, and so on. Assumes the
  * provided char will actually be alphabetic.
@@ -232,15 +183,12 @@ void generate_key(string str, char key[])
  * @param a An alphabetic character.
  * @return int The 0 based index of the character.
  */
-int get_index(char a)
+int letter_index(char a)
 {
     return 
         // If the letter is upper, subtract the value of 'A', if not subtract 'a'
         isupper(a) ? (a - 'A') : (a - 'a');
 }
-
-
-
 
 /**
  * This is where the magic happens. Produces the ciphertext from the user supplied plaintext. Preserves
@@ -250,7 +198,7 @@ int get_index(char a)
  * @param secret An empty char array same size as txt to hold the ciphertext.
  * @param key The encryption key
  */
-void encrypt(string txt, char secret[], char key[])
+void encrypt(string txt, char secret[], string key)
 {
     int i = 0;
     while(*txt != '\0')
@@ -259,15 +207,13 @@ void encrypt(string txt, char secret[], char key[])
         if(isalpha(*txt))
         {
             // Get the next letter from the correct index of the key
-           char next_char = key[get_index(*txt)];
+           char next_char = *(key + letter_index(*txt));
            if(isupper(*txt))
             {
-                // Cipher key is uppercase, if plaintext is also upper, add it as-is
-                secret[i++] = next_char;
+                secret[i++] = toupper(next_char);
             }
             else
             {
-                // Cipher key is uppercase, force it to lower first
                 secret[i++] = tolower(next_char);
             }
         }
