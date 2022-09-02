@@ -28,7 +28,7 @@ void validate_key(string str);
 int letter_index(char a);
 
 // Encrypts plaintext using the provided cipher key
-void encrypt(string txt, char secret[], char key[]);
+void encrypt(string txt, string key, char secret[]);
 
 
 
@@ -188,14 +188,14 @@ int letter_index(char a)
 }
 
 /**
- * This is where the magic happens. Produces the ciphertext from the user supplied plaintext. Preserves
- * uppercase/lowercase and punctuation.
+ * This is where the magic happens. Encrypts plaintext and produces ciphertext, respecting the 
+ * original case of the plaintext.
  * 
  * @param txt The plaintext supplied by the user.
  * @param secret An empty char array same size as txt to hold the ciphertext.
- * @param key The encryption key
+ * @param key Theencryption key
  */
-void encrypt(string txt, char secret[], string key)
+void encrypt(string txt, string key, char secret[])
 {
     int i = 0;
     while(*txt != '\0')
