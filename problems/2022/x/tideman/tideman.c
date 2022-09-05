@@ -139,7 +139,7 @@ void add_pairs(void)
                 pairs[pair_index].winner = i;
                 pairs[pair_index].loser = j;
             }
-            else
+            else if (preferences[i][j] < preferences[j][i])
             {
                 pairs[pair_index].winner = j;
                 pairs[pair_index].loser = i;
@@ -160,10 +160,12 @@ void sort_pairs(void)
     while(i < total_pairs && !sorted)
     {
         sorted = true;
+
         for(int j = i; j < total_pairs - 1; ++j)
         {
-            pref_a = preferences[pairs[j].winner][pairs[j].loser];
-            pref_b = preferences[pairs[j + 1].winner][pairs[j + 1].loser];
+            pref_a = preferences[ pairs[j].winner ][ pairs[j].loser ];
+            pref_b = preferences[ pairs[j + 1].winner ][ pairs[j + 1].loser ];
+
             if(pref_a < pref_b)
             {
                 pair temp = pairs[j];
@@ -180,13 +182,22 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    // TODO
-    return;
+    int total_pairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    // lock the first pair because we know it won't produce a cycle
+    locked[pairs[0].winner][pairs[0].loser] = true;
+
+    bool cycle = false;
+    for (int i = i; i < total_pairs; ++i)
+    {
+        
+        locked[pairs[i].winner][pairs[i].loser] = !cycle;
+    }
 }
 
 // Print the winner of the election
 void print_winner(void)
 {
-    // TODO
+
     return;
 }
