@@ -32,6 +32,7 @@ void record_preferences(int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
+bool is_cyclic(int start, int v_1, int v_2);
 void print_winner(void);
 
 int main(int argc, string argv[])
@@ -193,6 +194,28 @@ void lock_pairs(void)
         
         locked[pairs[i].winner][pairs[i].loser] = !cycle;
     }
+}
+
+bool is_cyclic(int start, int v_1, int v_2)
+{
+    if(locked[v_1][start])
+    {
+        return true;
+    }
+    if(v_2 > candidate_count - 1)
+    {
+        return false;
+    }
+    if(locked[v_1][v_2])
+    {
+        is_cyclic(start, v_2, 0);
+    }
+    else
+    {
+        is_cyclic(start, v_1, ++v_2);
+    }
+
+    return false;
 }
 
 // Print the winner of the election
