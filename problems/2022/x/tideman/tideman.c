@@ -139,13 +139,16 @@ void add_pairs(void)
             {
                 pairs[pair_index].winner = i;
                 pairs[pair_index].loser = j;
+                ++pair_count;
+                ++pair_index;
             }
             else if (preferences[i][j] < preferences[j][i])
             {
                 pairs[pair_index].winner = j;
                 pairs[pair_index].loser = i;
+                ++pair_count;
+                ++pair_index;
             }
-            ++pair_index;
         }
     }
 }
@@ -183,16 +186,18 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-    int total_pairs = sizeof(pairs) / sizeof(pairs[0]);
 
     // lock the first pair because we know it won't produce a cycle
     locked[pairs[0].winner][pairs[0].loser] = true;
+    int locked_winner = pairs[0].winner;
 
-    bool cycle = false;
-    for (int i = i; i < total_pairs; ++i)
+    for (int i = 1; i < pair_count; ++i)
     {
-        
-        locked[pairs[i].winner][pairs[i].loser] = !cycle;
+        if(!is_cyclic(locked_winner, pairs[i].loser, 0))
+        {
+            locked[pairs[i].winner][pairs[i].loser] = true;
+            locked_winner = pairs[i].winner;
+        }
     }
 }
 
@@ -202,7 +207,7 @@ bool is_cyclic(int start, int v_1, int v_2)
     {
         return true;
     }
-    if(v_2 > candidate_count - 1)
+    if(v_2 >= pair_count)
     {
         return false;
     }
@@ -228,7 +233,7 @@ void print_winner(void)
     {
         has_incoming_edge[i] = false;
     }
-    
+
     for (int winner = 0; winner < candidate_count; ++winner)
     {
         for (int loser = 0; loser < candidate_count; ++ loser)
