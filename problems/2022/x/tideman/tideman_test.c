@@ -37,24 +37,12 @@ void print_winner(void);
 
 int main(int argc, string argv[])
 {
-    // Check for invalid usage
-    if (argc < 2)
-    {
-        printf("Usage: tideman [candidate ...]\n");
-        return 1;
-    }
 
     // Populate array of candidates
-    candidate_count = argc - 1;
-    if (candidate_count > MAX)
-    {
-        printf("Maximum number of candidates is %i\n", MAX);
-        return 2;
-    }
-    for (int i = 0; i < candidate_count; i++)
-    {
-        candidates[i] = argv[i + 1];
-    }
+    candidate_count = 3;
+    candidates[0] = "Alice";
+    candidates[1] = "Bob";
+    candidates[2] = "Charlie";
 
     // Clear graph of locked in pairs
     for (int i = 0; i < candidate_count; i++)
@@ -66,7 +54,18 @@ int main(int argc, string argv[])
     }
 
     pair_count = 0;
-    int voter_count = get_int("Number of voters: ");
+    int voter_count = 9;
+    char *votes[] = {
+        {"Alice", "Bob", "Charlie"},
+        {"Alice", "Bob", "Charlie"},
+        {"Alice", "Bob", "Charlie"},
+        {"Bob", "Charlie", "Alice"},
+        {"Bob", "Charlie", "Alice"},
+        {"Charlie", "Alice", "Bob"},
+        {"Charlie", "Alice", "Bob"},
+        {"Charlie", "Alice", "Bob"},
+        {"Charlie", "Alice", "Bob"}
+        };
 
     // Query for votes
     for (int i = 0; i < voter_count; i++)
@@ -77,9 +76,9 @@ int main(int argc, string argv[])
         // Query for each rank
         for (int j = 0; j < candidate_count; j++)
         {
-            string name = get_string("Rank %i: ", j + 1);
+            printf("Adding rank %i: %s", j + 1, votes[i][j]);
 
-            if (!vote(j, name, ranks))
+            if (!vote(j, votes[i][j], ranks))
             {
                 printf("Invalid vote.\n");
                 return 3;
