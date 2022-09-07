@@ -221,6 +221,30 @@ bool is_cyclic(int start, int v_1, int v_2)
 // Print the winner of the election
 void print_winner(void)
 {
+    // Find the source of the graph
+    bool has_incoming_edge[candidate_count];
+    // Set all elements to false to get started:
+    for (int i = 0; i < candidate_count; ++i)
+    {
+        has_incoming_edge[i] = false;
+    }
+    
+    for (int winner = 0; winner < candidate_count; ++winner)
+    {
+        for (int loser = 0; loser < candidate_count; ++ loser)
+        {
+            if (locked[winner][loser])
+            {
+                has_incoming_edge[loser] = true;
+            }
+        }
+    }
 
-    return;
+    int winner = 0;
+    while(has_incoming_edge[winner])
+    {
+        ++winner;
+    }
+
+    printf("%s\n", candidates[winner]);
 }
