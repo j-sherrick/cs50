@@ -104,8 +104,8 @@ int main(int argc, string argv[])
     printf("\npairs[] after sorting:\n");
     print_pairs();
 
-    /* lock_pairs();
-    print_winner(); */
+    lock_pairs();
+    // print_winner();
 
     return 0;
 }
@@ -229,29 +229,32 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-
-    
+    for(int i = 0; i < pair_count; ++i)
+    {
+        if(!is_cyclic(pairs[i].winner, pairs[i].loser))
+        {
+            locked[pairs[i].winner][pairs[i].loser] = true;
+            printf("\n%s is locked in over %s\n", candidates[pairs[i].winner], candidates[pairs[i].loser]);
+        }
+    }
 }
 
-bool is_cyclic(int start, next)
+bool is_cyclic(int start, int next)
 {
-    if(locked[v_1][start])
+    if(locked[next][start])
     {
         return true;
     }
-    if(v_2 >= pair_count)
+    else 
     {
-        return false;
+        for(int i = 0; i < candidate_count; ++i)
+        {
+            if(locked[next][i])
+            {
+                return is_cyclic(start, i);
+            }
+        }
     }
-    if(locked[v_1][v_2])
-    {
-        is_cyclic(start, v_2, 0);
-    }
-    else
-    {
-        is_cyclic(start, v_1, ++v_2);
-    }
-
     return false;
 }
 
