@@ -31,6 +31,7 @@ bool vote(int rank, string name, int ranks[]);
 void record_preferences(int ranks[]);
 void print_preferences(void);
 void add_pairs(void);
+void print_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
 bool is_cyclic(int start, int v_1, int v_2);
@@ -56,7 +57,7 @@ int main(int argc, string argv[])
 
     pair_count = 0;
     int voter_count = 9;
-    char *votes[] = {
+    string votes[9][3] = {
         {"Alice", "Bob", "Charlie"},
         {"Alice", "Bob", "Charlie"},
         {"Alice", "Bob", "Charlie"},
@@ -71,6 +72,7 @@ int main(int argc, string argv[])
     // Query for votes
     for (int i = 0; i < voter_count; i++)
     {
+        printf("Voter %d preferences:\n", i + 1);
         // ranks[i] is voter's ith preference
         int ranks[candidate_count];
 
@@ -83,14 +85,14 @@ int main(int argc, string argv[])
                 return 3;
             }
         }
-        printf("Voter %d preferences:\n", i + 1);
+        
         record_preferences(ranks);
 
         printf("\n");
     }
     // Print preference totals
     print_preferences();
-    
+
     add_pairs();
 
     printf("\npairs[] before sorting:\n");
@@ -114,7 +116,7 @@ bool vote(int rank, string name, int ranks[])
     {
         if (strcmp(name, candidates[i]) == 0)
         {
-            printf("Adding rank %d: %s\n", rank, name);
+            printf("\t- Adding rank %d: %s\n", rank, name);
             ranks[rank] = i;
             return true;
         }
