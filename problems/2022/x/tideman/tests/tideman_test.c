@@ -105,7 +105,7 @@ int main(int argc, string argv[])
     print_pairs();
 
     lock_pairs();
-    // print_winner();
+    print_winner();
 
     return 0;
 }
@@ -241,13 +241,13 @@ void lock_pairs(void)
 
 bool is_cyclic(int start, int next)
 {
-    if(locked[next][start])
+    if (locked[next][start])
     {
         return true;
     }
     else 
     {
-        for(int i = 0; i < candidate_count; ++i)
+        for (int i = 0; i < candidate_count; ++i)
         {
             if(locked[next][i])
             {
@@ -261,30 +261,20 @@ bool is_cyclic(int start, int next)
 // Print the winner of the election
 void print_winner(void)
 {
-    // Find the source of the graph
-    bool has_incoming_edge[candidate_count];
-    // Set all elements to false to get started:
-    for (int i = 0; i < candidate_count; ++i)
+    bool has_incoming = true;
+    for(int i = 0; i < candidate_count && has_incoming; ++i)
     {
-        has_incoming_edge[i] = false;
-    }
-
-    for (int winner = 0; winner < candidate_count; ++winner)
-    {
-        for (int loser = 0; loser < candidate_count; ++ loser)
+        has_incoming = false;
+        for(int j = 0; j < candidate_count && !has_incoming; ++j)
         {
-            if (locked[winner][loser])
+            if(locked[j][i])
             {
-                has_incoming_edge[loser] = true;
+                has_incoming = true;
             }
         }
+        if(!has_incoming)
+        {
+            printf("%s\n", candidates[i]);
+        }
     }
-
-    int winner = 0;
-    while(has_incoming_edge[winner])
-    {
-        ++winner;
-    }
-
-    printf("%s\n", candidates[winner]);
 }
