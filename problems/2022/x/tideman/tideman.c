@@ -32,7 +32,7 @@ void record_preferences(int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
-bool is_cyclic(int start, int v_1, int v_2);
+bool is_cyclic(int start, int next);
 void print_winner(void);
 
 int main(int argc, string argv[])
@@ -105,6 +105,7 @@ bool vote(int rank, string name, int ranks[])
     {
         if (strcmp(name, candidates[i]) == 0)
         {
+            // printf("\t- Adding rank %d: %s\n", rank, name);
             ranks[rank] = i;
             return true;
         }
@@ -123,8 +124,8 @@ void record_preferences(int ranks[])
         {
             int under = ranks[j];
             ++preferences[over][under];
+            // printf("\t - %s over %s\n", candidates[over], candidates[under]);
         }
-        printf("");
     }
 }
 
@@ -142,6 +143,8 @@ void add_pairs(void)
                 pairs[pair_index].loser = j;
                 ++pair_count;
                 ++pair_index;
+                // printf("%s(%d) wins over %s(%d). ", candidates[i], preferences[i][j], candidates[j], preferences[j][i]);
+                // printf("%d pairs added.\n", pair_count);
             }
             else if (preferences[i][j] < preferences[j][i])
             {
@@ -149,8 +152,9 @@ void add_pairs(void)
                 pairs[pair_index].loser = i;
                 ++pair_count;
                 ++pair_index;
+                // printf("%s(%d) wins over %s(%d). ", candidates[j], preferences[j][i], candidates[i], preferences[i][j]);
+                // printf("%d pairs added.\n", pair_count + 1);
             }
-            printf("");
         }
     }
 }
@@ -158,16 +162,15 @@ void add_pairs(void)
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    int total_pairs = candidate_count * (candidate_count - 1) / 2;
     int i = 0;
     bool sorted = false;
     int pref_a, pref_b;
 
-    while(i < total_pairs && !sorted)
+    while(i < pair_count && !sorted)
     {
         sorted = true;
 
-        for(int j = i; j < total_pairs - 1; ++j)
+        for(int j = i; j < pair_count - 1; ++j)
         {
             pref_a = preferences[ pairs[j].winner ][ pairs[j].loser ];
             pref_b = preferences[ pairs[j + 1].winner ][ pairs[j + 1].loser ];
@@ -188,71 +191,52 @@ void sort_pairs(void)
 // Lock pairs into the candidate graph in order, without creating cycles
 void lock_pairs(void)
 {
-
-    // lock the first pair because we know it won't produce a cycle
-    locked[pairs[0].winner][pairs[0].loser] = true;
-    int locked_winner = pairs[0].winner;
-
-    for (int i = 1; i < pair_count; ++i)
+    for(int i = 0; i < pair_count; ++i)
     {
-        if(!is_cyclic(locked_winner, pairs[i].loser, 0))
+        if(!is_cyclic(pairs[i].winner, pairs[i].loser))
         {
             locked[pairs[i].winner][pairs[i].loser] = true;
-            locked_winner = pairs[i].winner;
+            // printf("\n%s is locked in over %s\n", candidates[pairs[i].winner], candidates[pairs[i].loser]);
         }
-        printf("");
     }
 }
 
-bool is_cyclic(int start, int v_1, int v_2)
+bool is_cyclic(int start, int next)
 {
-    if(locked[v_1][start])
+    if (locked[next][start])
     {
         return true;
     }
-    if(v_2 >= pair_count)
+    else 
     {
-        return false;
+        for (int i = 0; i < candidate_count; ++i)
+        {
+            if(locked[next][i])
+            {
+                return is_cyclic(start, i);
+            }
+        }
     }
-    if(locked[v_1][v_2])
-    {
-        is_cyclic(start, v_2, 0);
-    }
-    else
-    {
-        is_cyclic(start, v_1, ++v_2);
-    }
-
     return false;
 }
 
 // Print the winner of the election
 void print_winner(void)
 {
-    // Find the source of the graph
-    bool has_incoming_edge[candidate_count];
-    // Set all elements to false to get started:
-    for (int i = 0; i < candidate_count; ++i)
+    bool has_incoming = true;
+    for(int i = 0; i < candidate_count && has_incoming; ++i)
     {
-        has_incoming_edge[i] = false;
-    }
-
-    for (int winner = 0; winner < candidate_count; ++winner)
-    {
-        for (int loser = 0; loser < candidate_count; ++ loser)
+        has_incoming = false;
+        for(int j = 0; j < candidate_count && !has_incoming; ++j)
         {
-            if (locked[winner][loser])
+            if(locked[j][i])
             {
-                has_incoming_edge[loser] = true;
+                has_incoming = true;
             }
         }
+        if(!has_incoming)
+        {
+            printf("%s\n", candidates[i]);
+        }
     }
-
-    int winner = 0;
-    while(has_incoming_edge[winner])
-    {
-        ++winner;
-    }
-
-    printf("%s\n", candidates[winner]);
 }
