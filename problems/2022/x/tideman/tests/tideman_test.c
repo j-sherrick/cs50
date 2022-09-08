@@ -34,7 +34,7 @@ void add_pairs(void);
 void print_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
-bool is_cyclic(int start, int v_1, int v_2);
+bool is_cyclic(int start, int next);
 void print_winner(void);
 
 int main(int argc, string argv[])
@@ -92,6 +92,7 @@ int main(int argc, string argv[])
     }
     // Print preference totals
     print_preferences();
+    printf("\n");
 
     add_pairs();
 
@@ -144,7 +145,7 @@ void record_preferences(int ranks[])
 void print_preferences(void)
 {
     printf("\nPreference totals:\n");
-    for(int i = 0; i < candidate_count - 1; ++i)
+    for(int i = 0; i < candidate_count; ++i)
     {
         for(int j = 0; j < candidate_count; ++j)
         {
@@ -168,7 +169,7 @@ void add_pairs(void)
                 ++pair_count;
                 ++pair_index;
                 printf("%s(%d) wins over %s(%d). ", candidates[i], preferences[i][j], candidates[j], preferences[j][i]);
-                printf("%d pairs added.\n", pair_count + 1);
+                printf("%d pairs added.\n", pair_count);
             }
             else if (preferences[i][j] < preferences[j][i])
             {
@@ -229,22 +230,10 @@ void sort_pairs(void)
 void lock_pairs(void)
 {
 
-    // lock the first pair because we know it won't produce a cycle
-    locked[pairs[0].winner][pairs[0].loser] = true;
-    int locked_winner = pairs[0].winner;
-
-    for (int i = 1; i < pair_count; ++i)
-    {
-        if(!is_cyclic(locked_winner, pairs[i].loser, 0))
-        {
-            locked[pairs[i].winner][pairs[i].loser] = true;
-            locked_winner = pairs[i].winner;
-        }
-        printf("");
-    }
+    
 }
 
-bool is_cyclic(int start, int v_1, int v_2)
+bool is_cyclic(int start, next)
 {
     if(locked[v_1][start])
     {
