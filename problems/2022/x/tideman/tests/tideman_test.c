@@ -29,6 +29,7 @@ int candidate_count;
 // Function prototypes
 bool vote(int rank, string name, int ranks[]);
 void record_preferences(int ranks[]);
+void print_preferences(void);
 void add_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
@@ -76,24 +77,33 @@ int main(int argc, string argv[])
         // Query for each rank
         for (int j = 0; j < candidate_count; j++)
         {
-            printf("Adding rank %i: %s", j + 1, votes[i][j]);
-
             if (!vote(j, votes[i][j], ranks))
             {
                 printf("Invalid vote.\n");
                 return 3;
             }
         }
-
+        printf("Voter %d preferences:\n", i + 1);
         record_preferences(ranks);
 
         printf("\n");
     }
-
+    // Print preference totals
+    print_preferences();
+    
     add_pairs();
+
+    printf("\npairs[] before sorting:\n");
+    print_pairs();
+
     sort_pairs();
-    lock_pairs();
-    print_winner();
+
+    printf("\npairs[] after sorting:\n");
+    print_pairs();
+
+    /* lock_pairs();
+    print_winner(); */
+
     return 0;
 }
 
@@ -104,6 +114,7 @@ bool vote(int rank, string name, int ranks[])
     {
         if (strcmp(name, candidates[i]) == 0)
         {
+            printf("Adding rank %d: %s\n", rank, name);
             ranks[rank] = i;
             return true;
         }
@@ -122,8 +133,21 @@ void record_preferences(int ranks[])
         {
             int under = ranks[j];
             ++preferences[over][under];
+            printf("\t - %s over %s\n", candidates[over], candidates[under]);
         }
-        printf("");
+    }
+}
+
+// Print the current state of the preferences matrix
+void print_preferences(void)
+{
+    printf("\nPreference totals:\n");
+    for(int i = 0; i < candidate_count - 1; ++i)
+    {
+        for(int j = 0; j < candidate_count; ++j)
+        {
+            printf("\t- %d voters prefer %s over %s\n", preferences[i][j], candidates[i], candidates[j]);
+        }
     }
 }
 
@@ -141,6 +165,8 @@ void add_pairs(void)
                 pairs[pair_index].loser = j;
                 ++pair_count;
                 ++pair_index;
+                printf("%s(%d) wins over %s(%d). ", candidates[i], preferences[i][j], candidates[j], preferences[j][i]);
+                printf("%d pairs added.\n", pair_count + 1);
             }
             else if (preferences[i][j] < preferences[j][i])
             {
@@ -148,25 +174,38 @@ void add_pairs(void)
                 pairs[pair_index].loser = i;
                 ++pair_count;
                 ++pair_index;
+                printf("%s(%d) wins over %s(%d). ", candidates[j], preferences[j][i], candidates[i], preferences[i][j]);
+                printf("%d pairs added.\n", pair_count + 1);
             }
-            printf("");
         }
+    }
+}
+
+void print_pairs(void)
+{
+    int winner_count, loser_count;
+    for(int i = 0; i < pair_count; ++i)
+    {
+        string winner = candidates[pairs[i].winner];
+        string loser = candidates[pairs[i].loser];
+        winner_count = preferences[pairs[i].winner][pairs[i].loser];
+        loser_count = preferences[pairs[i].loser][pairs[i].winner];
+        printf("\t- %s(%d) wins over %s(%d)\n", winner, winner_count, loser, loser_count);
     }
 }
 
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void)
 {
-    int total_pairs = candidate_count * (candidate_count - 1) / 2;
     int i = 0;
     bool sorted = false;
     int pref_a, pref_b;
 
-    while(i < total_pairs && !sorted)
+    while(i < pair_count && !sorted)
     {
         sorted = true;
 
-        for(int j = i; j < total_pairs - 1; ++j)
+        for(int j = i; j < pair_count - 1; ++j)
         {
             pref_a = preferences[ pairs[j].winner ][ pairs[j].loser ];
             pref_b = preferences[ pairs[j + 1].winner ][ pairs[j + 1].loser ];
