@@ -178,7 +178,7 @@ void add_pairs(void)
                 ++pair_count;
                 ++pair_index;
                 printf("%s(%d) wins over %s(%d). ", candidates[j], preferences[j][i], candidates[i], preferences[i][j]);
-                printf("%d pairs added.\n", pair_count + 1);
+                printf("%d pairs added.\n", pair_count);
             }
         }
     }
@@ -241,20 +241,26 @@ void lock_pairs(void)
 
 bool is_cyclic(int start, int next)
 {
-    if (locked[next][start])
+    for (int i = 0; i < candidate_count; ++i)
     {
-        return true;
-    }
-    else 
-    {
-        for (int i = 0; i < candidate_count; ++i)
+        printf("\nLooking for edge from %s to %s\n", candidates[next], candidates[i]);
+        if(locked[next][i])
         {
-            if(locked[next][i])
+            printf("Edge found!\n");
+            if(i == start)
             {
-                return is_cyclic(start, i);
+                printf("Edge creates a cycle! Returns true.\n");
+                return true;
+            }
+            else
+            {
+                is_cyclic(start, i);
+                printf("Returned from checking %s for outgoing edges.\n", candidates[i]);
             }
         }
+        printf("No edge from %s to %s\n", candidates[next], candidates[i]);
     }
+    printf("No outgoing edges from %s found.\nReturns false.\n", candidates[next]);
     return false;
 }
 
