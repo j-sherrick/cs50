@@ -243,24 +243,18 @@ bool is_cyclic(int start, int next)
 {
     for (int i = 0; i < candidate_count; ++i)
     {
-        printf("\nLooking for edge from %s to %s\n", candidates[next], candidates[i]);
         if(locked[next][i])
         {
-            printf("Edge found!\n");
             if(i == start)
             {
-                printf("Edge creates a cycle! Returns true.\n");
                 return true;
             }
             else
             {
                 is_cyclic(start, i);
-                printf("Returned from checking %s for outgoing edges.\n", candidates[i]);
             }
         }
-        printf("No edge from %s to %s\n", candidates[next], candidates[i]);
     }
-    printf("No outgoing edges from %s found.\nReturns false.\n", candidates[next]);
     return false;
 }
 
