@@ -37,72 +37,13 @@ void lock_pairs(void);
 bool is_cyclic(int start, int next);
 void print_winner(void);
 
+void lock_final_pair_test(void);
+
 int main(int argc, string argv[])
 {
 
-    // Populate array of candidates
-    candidate_count = 3;
-    candidates[0] = "Alice";
-    candidates[1] = "Bob";
-    candidates[2] = "Charlie";
-
-    // Clear graph of locked in pairs
-    for (int i = 0; i < candidate_count; i++)
-    {
-        for (int j = 0; j < candidate_count; j++)
-        {
-            locked[i][j] = false;
-        }
-    }
-
-    pair_count = 0;
-    int voter_count = 9;
-    string votes[9][3] = {
-        {"Alice", "Bob", "Charlie"},
-        {"Alice", "Bob", "Charlie"},
-        {"Alice", "Bob", "Charlie"},
-        {"Bob", "Charlie", "Alice"},
-        {"Bob", "Charlie", "Alice"},
-        {"Charlie", "Alice", "Bob"},
-        {"Charlie", "Alice", "Bob"},
-        {"Charlie", "Alice", "Bob"},
-        {"Charlie", "Alice", "Bob"}
-        };
-
-    // Query for votes
-    for (int i = 0; i < voter_count; i++)
-    {
-        printf("Voter %d preferences:\n", i + 1);
-        // ranks[i] is voter's ith preference
-        int ranks[candidate_count];
-
-        // Query for each rank
-        for (int j = 0; j < candidate_count; j++)
-        {
-            if (!vote(j, votes[i][j], ranks))
-            {
-                printf("Invalid vote.\n");
-                return 3;
-            }
-        }
-        
-        record_preferences(ranks);
-
-        printf("\n");
-    }
-    // Print preference totals
-    print_preferences();
-    printf("\n");
-
-    add_pairs();
-
-    printf("\npairs[] before sorting:\n");
-    print_pairs();
-
-    sort_pairs();
-
-    printf("\npairs[] after sorting:\n");
-    print_pairs();
+    
+    
 
     lock_pairs();
     print_winner();
@@ -241,20 +182,19 @@ void lock_pairs(void)
 
 bool is_cyclic(int start, int next)
 {
+    if(locked[next][start])
+    {
+        return true;
+    }
+
     for (int i = 0; i < candidate_count; ++i)
     {
         if(locked[next][i])
         {
-            if(i == start)
-            {
-                return true;
-            }
-            else
-            {
-                is_cyclic(start, i);
-            }
+            return is_cyclic(start, i);
         }
     }
+
     return false;
 }
 
@@ -277,4 +217,29 @@ void print_winner(void)
             printf("%s\n", candidates[i]);
         }
     }
+}
+
+void lock_final_pair_test(void)
+{
+    candidate_count = 6;
+    candidates[0] = "Alice";
+    candidates[1] = "Bob";
+    candidates[2] = "Charlie";
+    candidates[3] = "David";
+    candidates[4] = "Eric";
+    candidates[5] = "Frank";
+
+    pair_count = 7;
+    pairs[0].winner = 0; pairs[0].loser = 1;
+    pairs[1].winner = 1; pairs[1].loser = 4;
+    pairs[2].winner = 4; pairs[2].loser = 2;
+    pairs[3].winner = 4; pairs[3].loser = 3;
+    pairs[4].winner = 3; pairs[4].loser = 5;
+    pairs[5].winner = 5; pairs[5].loser = 1;
+    pairs[6].winner = 2; pairs[6].loser = 1;
+
+    lock_pairs();
+        /* for (int i = 0; i < candidate_count; i++)
+            for (int j = 0; j < candidate_count; j++)
+                printf("%s ", locked[i][j] ? "true" : "false"); */
 }
