@@ -42,12 +42,8 @@ void lock_final_pair_test(void);
 int main(int argc, string argv[])
 {
 
+    lock_final_pair_test();
     
-    
-
-    lock_pairs();
-    print_winner();
-
     return 0;
 }
 
@@ -189,9 +185,9 @@ bool is_cyclic(int start, int next)
 
     for (int i = 0; i < candidate_count; ++i)
     {
-        if(locked[next][i])
+        if(locked[next][i] && is_cyclic(start, i))
         {
-            return is_cyclic(start, i);
+            return true;
         }
     }
 
@@ -239,7 +235,9 @@ void lock_final_pair_test(void)
     pairs[6].winner = 2; pairs[6].loser = 1;
 
     lock_pairs();
-        /* for (int i = 0; i < candidate_count; i++)
+        for (int i = 0; i < candidate_count; i++)
             for (int j = 0; j < candidate_count; j++)
-                printf("%s ", locked[i][j] ? "true" : "false"); */
+                printf("%s ", locked[i][j] ? "true" : "false");
+
+    printf("\n");
 }
