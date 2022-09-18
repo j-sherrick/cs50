@@ -1,11 +1,11 @@
-sort1 uses: TODO
+sort1 uses: Bubble sort
 
-How do you know?: TODO
+How do you know?: It is significantly faster on random data than sorted data, indicating the best and worse case time complexity are consistent with bubble sort.
 
-sort2 uses: TODO
+sort2 uses: Merge sort
 
-How do you know?: TODO
+How do you know?: It completes fastest and it's running time is unaffected by the distribution of data.
 
-sort3 uses: TODO
+sort3 uses: SELECTION SORT
 
-How do you know?: TODO
+How do you know?: It's running time is unaffected by distribution of data but it's not as fast as sort2.
