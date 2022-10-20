@@ -1,5 +1,5 @@
 #include "helpers.h"
-#include "bmp.h"
+//#include "bmp.h"
 #include <stdlib.h>
 
 #define BOXSIZE 9
