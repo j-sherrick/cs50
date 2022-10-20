@@ -1,6 +1,7 @@
 #include "helpers.h"
 //#include "bmp.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define BOXSIZE 9
 
@@ -64,6 +65,11 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             pixel->rgbtGreen = g_sum / BOXSIZE;
             pixel->rgbtBlue = b_sum / BOXSIZE;
         }
+    }
+    // Copy blurred image over to original
+    for (int i = 0; i < height; i++)
+    {
+        memcpy(image[i], imgblur[i], width);
     }
 }
 
