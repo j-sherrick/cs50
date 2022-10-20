@@ -8,7 +8,7 @@ int main(void)
 
     // Define input files
     char *infile = "../images/yard.bmp";
-    char *outfile = "../images/yardblur.bmp";
+    char *outfile = "../images/yardgray.bmp";
 
     // Open input file
     FILE *inptr = fopen(infile, "r");
@@ -52,7 +52,7 @@ int main(void)
         fseek(inptr, padding, SEEK_CUR);
     }
 
-    blur(height, width, image);
+    grayscale(height, width, image);
 
     fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, outptr);
     fwrite(&bi, sizeof(BITMAPINFOHEADER), 1, outptr);
