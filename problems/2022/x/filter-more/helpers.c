@@ -1,5 +1,4 @@
 #include "helpers.h"
-//#include "bmp.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -27,14 +26,24 @@ void grayscale(int height, int width, RGBTRIPLE image[height][width])
 // Reflect image horizontally
 void reflect(int height, int width, RGBTRIPLE image[height][width])
 {
-    return;
+    RGBTRIPLE swap_pixel;
+    for (int row = 0; row < height; ++row)
+    {
+        for (int left = 0, right = width - 1; left < right; ++left, --right)
+        {
+            swap_pixel = image[row][left];
+            image[row][left] = image[row][right];
+            image[row][right] = swap_pixel;
+        }
+    }
 }
 
 // Blur image
 void blur(int height, int width, RGBTRIPLE image[height][width])
 {
-    printf("Image has height=%d width=%d\n", height, width);
+    // New pixel array for storing blurred values
     RGBTRIPLE imgblur[height][width];
+    // Pointer to use for operations on current pixel
     RGBTRIPLE *pixel = NULL;
 
     // Offsets to use in obtaining neighbors of each pixel
@@ -46,41 +55,40 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
     {
         for (int x = 0; x < width; x++)
         {
-            //r_sum = 0;
+            r_sum = 0;
             g_sum = 0;
             b_sum = 0;
+            // Loop over neighbors of current pixel
             for (int i = 0; i < BOXSIZE; i++)
             {
+                // Add offset to current coordinates
                 int nX = x + xoff[i];
                 int nY = y + yoff[i];
+                // Check coordinate is not out of bounds
                 if (nX < 0 || nX >= width || nY < 0 || nY >= height)
                 {
-                    //printf("Neighbor offset out of bounds:\nnX=%d nY=%d, h=%d w=%d\n", nX, nY, height, width);
                     continue;
                 }
+                // Get pointer to neighbor
                 pixel = &image[nY][nX];
-                //r_sum += pixel->rgbtRed;
+                // Add current RGB values to sum
+                r_sum += pixel->rgbtRed;
                 g_sum += pixel->rgbtGreen;
                 b_sum += pixel->rgbtBlue;
             }
+            // Move pixel pointer to blurred image array
             pixel = &imgblur[y][x];
-            pixel->rgbtRed = 250;
+            // Calculate averages
+            pixel->rgbtRed = r_sum / BOXSIZE;
             pixel->rgbtGreen = g_sum / BOXSIZE;
             pixel->rgbtBlue = b_sum / BOXSIZE;
-            if (x == width - 1) printf("wrote the last pixel at x=%d y=%d\n", x, y);
         }
-    }
-    FILE *out_ptr = fopen("./images/blur_dbg.bmp", "w");
-    if(!out_ptr)
-    {
-        printf("Oops! Couldn't open output file.\n");
-        return;
     }
     
     // Copy blurred image over to original
     for (int i = 0; i < height; i++)
     {
-        memcpy(image[i], imgblur[i], width);
+        memcpy(image[i], imgblur[i], width * sizeof(RGBTRIPLE));
     }
 }
 
