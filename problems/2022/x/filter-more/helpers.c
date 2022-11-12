@@ -64,7 +64,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
                 // Add offset to current coordinates
                 int nX = x + xoff[i];
                 int nY = y + yoff[i];
-                // Check coordinate is not out of bounds
+                // Check offset coordinate is not out of bounds
                 if (nX < 0 || nX >= width || nY < 0 || nY >= height)
                 {
                     continue;
