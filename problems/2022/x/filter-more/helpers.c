@@ -3,7 +3,16 @@
 #include <string.h>
 #include <stdio.h>
 
-#define BOXSIZE 9
+
+const BYTE BOXSIZE = 9;
+
+// Offsets for getting each neighbor in a 3x3 box around each pixel
+const BYTE XOFF[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+const BYTE YOFF[] = {1, 1, 1, 0, 0, 0, -1, -1, -1};
+
+// Flattened sobel operator
+const BYTE GX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+const BYTE GY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
@@ -45,10 +54,6 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
     RGBTRIPLE imgblur[height][width];
     // Pointer to use for operations on current pixel
     RGBTRIPLE *pixel = NULL;
-
-    // Offsets to use in obtaining neighbors of each pixel
-    int xoff[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
-    int yoff[] = {1, 1, 1, 0, 0, 0, -1, -1, -1};
  
     WORD r_sum, g_sum, b_sum;
     for (int y = 0; y < height; y++)
@@ -62,8 +67,8 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             for (int i = 0; i < BOXSIZE; i++)
             {
                 // Add offset to current coordinates
-                int nX = x + xoff[i];
-                int nY = y + yoff[i];
+                int nX = x + XOFF[i];
+                int nY = y + YOFF[i];
                 // Check offset coordinate is not out of bounds
                 if (nX < 0 || nX >= width || nY < 0 || nY >= height)
                 {
