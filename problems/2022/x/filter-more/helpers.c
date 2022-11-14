@@ -7,12 +7,12 @@
 const BYTE BOXSIZE = 9;
 
 // Offsets for getting each neighbor in a 3x3 box around each pixel
-const BYTE XOFF[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
-const BYTE YOFF[] = {1, 1, 1, 0, 0, 0, -1, -1, -1};
+const int XOFF[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+const int YOFF[] = {1, 1, 1, 0, 0, 0, -1, -1, -1};
 
 // Flattened sobel operator
-const BYTE GX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-const BYTE GY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+const int GX[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+const int GY[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
@@ -100,5 +100,33 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width])
 {
-    return;
+    RGBTRIPLE img_edge[height][width];
+    RGBTRIPLE *pixel = NULL;
+    int gx_rsum, gx_gsum, gx_bsum, gy_rsum, gy_gsum, gy_bsum;
+    int nY, nX;
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            // reset all Sobel sums
+            gx_rsum = 0, gx_gsum = 0, gx_bsum = 0;
+            gy_rsum = 0, gy_gsum = 0, gy_bsum = 0;
+            for (int npx = 0; npx < BOXSIZE; ++npx)
+            {
+                nY = y + YOFF[npx];
+                nX = x + XOFF[npx];
+                if (nY < 0 || nY >= height || nX < 0 || nX >= width)
+                {
+                    continue;
+                }
+                pixel = &image[nY][nX];
+                gx_rsum += pixel->rgbtRed * GX[npx];
+                gx_gsum += pixel->rgbtGreen * GX[npx];
+                gx_bsum += pixel->rgbtBlue * GX[npx];
+                gy_rsum += pixel->rgbtRed * GY[npx];
+                gy_gsum += pixel->rgbtGreen * GY[npx];
+                gy_bsum += pixel->rgbtBlue * GY[npx];
+            }
+        }
+    }
 }
