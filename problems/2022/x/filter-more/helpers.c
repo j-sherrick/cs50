@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 
-const BYTE BOXSIZE = 9;
+const int BOXSIZE = 9;
 
 // Offsets for getting each neighbor in a 3x3 box around each pixel
 const int XOFF[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
@@ -102,31 +103,46 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
 {
     RGBTRIPLE img_edge[height][width];
     RGBTRIPLE *pixel = NULL;
-    int gx_rsum, gx_gsum, gx_bsum, gy_rsum, gy_gsum, gy_bsum;
+    // Gx kernel sums
+    int gx_rsum, gx_gsum, gx_bsum;
+    // Gy kernel sums
+    int gy_rsum, gy_gsum, gy_bsum;
+    // Neighbor coordinates
     int nY, nX;
+
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            // reset all Sobel sums
-            gx_rsum = 0, gx_gsum = 0, gx_bsum = 0;
-            gy_rsum = 0, gy_gsum = 0, gy_bsum = 0;
-            for (int npx = 0; npx < BOXSIZE; ++npx)
+            gx_rsum = 0; gx_gsum = 0; gx_bsum = 0;
+            gy_gsum = 0; gy_rsum = 0; gy_bsum = 0;
+            // Get neighbors of current pixel
+            for (int i = 0; i < BOXSIZE; ++i)
             {
-                nY = y + YOFF[npx];
-                nX = x + XOFF[npx];
+                nY = y + YOFF[i];
+                nX = x + XOFF[i];
                 if (nY < 0 || nY >= height || nX < 0 || nX >= width)
                 {
                     continue;
                 }
                 pixel = &image[nY][nX];
-                gx_rsum += pixel->rgbtRed * GX[npx];
-                gx_gsum += pixel->rgbtGreen * GX[npx];
-                gx_bsum += pixel->rgbtBlue * GX[npx];
-                gy_rsum += pixel->rgbtRed * GY[npx];
-                gy_gsum += pixel->rgbtGreen * GY[npx];
-                gy_bsum += pixel->rgbtBlue * GY[npx];
+                gx_rsum += pixel->rgbtRed * GX[i];
+                gx_gsum += pixel->rgbtGreen * GX[i];
+                gx_bsum += pixel->rgbtBlue * GX[i];
+                gy_rsum += pixel->rgbtRed * GY[i];
+                gy_gsum += pixel->rgbtGreen * GY[i];
+                gy_bsum += pixel->rgbtBlue * GY[i];
             }
+            pixel = &img_edge[y][x];
+            pixel->rgbtRed = sqrt(gx_rsum * gx_rsum + gy_rsum * gy_rsum);
+            pixel->rgbtGreen = sqrt(gx_gsum * gx_gsum + gy_gsum * gy_gsum);
+            pixel->rgbtBlue = sqrt(gx_bsum * gx_bsum + gy_bsum * gy_bsum);
         }
+    }
+
+    // Write edge filtered image over original
+    for (int i = 0; i < height; i++)
+    {
+        memcpy(image[i], img_edge[i], width * sizeof(RGBTRIPLE));
     }
 }
