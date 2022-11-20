@@ -125,6 +125,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                 {
                     continue;
                 }
+                // Get a pointer to the unaltered image, and calculate Sobel sums
                 pixel = &image[nY][nX];
                 gx_rsum += pixel->rgbtRed * GX[i];
                 gx_gsum += pixel->rgbtGreen * GX[i];
@@ -133,6 +134,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
                 gy_gsum += pixel->rgbtGreen * GY[i];
                 gy_bsum += pixel->rgbtBlue * GY[i];
             }
+            // Write values to edge enhanced image
             pixel = &img_edge[y][x];
             pixel->rgbtRed = sqrt(gx_rsum * gx_rsum + gy_rsum * gy_rsum);
             pixel->rgbtGreen = sqrt(gx_gsum * gx_gsum + gy_gsum * gy_gsum);
@@ -140,7 +142,7 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
         }
     }
 
-    // Write edge filtered image over original
+    // Write filtered image over original
     for (int i = 0; i < height; i++)
     {
         memcpy(image[i], img_edge[i], width * sizeof(RGBTRIPLE));
