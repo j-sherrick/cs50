@@ -25,7 +25,7 @@ void grayscale(int height, int width, RGBTRIPLE image[height][width])
         for (int j = 0; j < width; j++)
         {
             pixel = &image[i][j];
-            gray_avg = (pixel->rgbtBlue + pixel->rgbtGreen + pixel->rgbtRed) / 3;
+            gray_avg = lround((pixel->rgbtBlue + pixel->rgbtGreen + pixel->rgbtRed) / 3.0);
             pixel->rgbtBlue = gray_avg;
             pixel->rgbtGreen = gray_avg;
             pixel->rgbtRed = gray_avg;
@@ -56,7 +56,9 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
     // Pointer to use for operations on current pixel
     RGBTRIPLE *pixel = NULL;
  
-    WORD r_sum, g_sum, b_sum;
+    int r_sum, g_sum, b_sum;
+
+    int out_sum;
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -64,6 +66,7 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
             r_sum = 0;
             g_sum = 0;
             b_sum = 0;
+            out_sum = 0;
             // Loop over neighbors of current pixel
             for (int i = 0; i < BOXSIZE; i++)
             {
@@ -73,21 +76,25 @@ void blur(int height, int width, RGBTRIPLE image[height][width])
                 // Check offset coordinate is not out of bounds
                 if (nX < 0 || nX >= width || nY < 0 || nY >= height)
                 {
+                    ++out_sum;
                     continue;
                 }
-                // Get pointer to neighbor
                 pixel = &image[nY][nX];
-                // Add current RGB values to sum
                 r_sum += pixel->rgbtRed;
                 g_sum += pixel->rgbtGreen;
                 b_sum += pixel->rgbtBlue;
             }
-            // Move pixel pointer to blurred image array
             pixel = &imgblur[y][x];
+
             // Calculate averages
-            pixel->rgbtRed = r_sum / BOXSIZE;
-            pixel->rgbtGreen = g_sum / BOXSIZE;
-            pixel->rgbtBlue = b_sum / BOXSIZE;
+            int box_count = BOXSIZE - out_sum;
+            int r_avg = lround((float)r_sum / box_count);
+            int g_avg = lround((float)g_sum / box_count);
+            int b_avg = lround((float)b_sum / box_count);
+            // Write averages
+            pixel->rgbtRed = r_avg;
+            pixel->rgbtGreen = g_avg;
+            pixel->rgbtBlue = b_avg;
         }
     }
     
@@ -114,31 +121,45 @@ void edges(int height, int width, RGBTRIPLE image[height][width])
     {
         for (int x = 0; x < width; x++)
         {
-            gx_rsum = 0; gx_gsum = 0; gx_bsum = 0;
-            gy_gsum = 0; gy_rsum = 0; gy_bsum = 0;
+            gx_rsum = 0;
+            gx_gsum = 0;
+            gx_bsum = 0;
+
+            gy_rsum = 0;
+            gy_gsum = 0;
+            gy_bsum = 0;
             // Get neighbors of current pixel
             for (int i = 0; i < BOXSIZE; ++i)
             {
                 nY = y + YOFF[i];
                 nX = x + XOFF[i];
-                if (nY < 0 || nY >= height || nX < 0 || nX >= width)
+                if (nX < 0 || nX >= width || nY < 0 || nY >= height)
                 {
                     continue;
                 }
                 // Get a pointer to the unaltered image, and calculate Sobel sums
                 pixel = &image[nY][nX];
+
                 gx_rsum += pixel->rgbtRed * GX[i];
                 gx_gsum += pixel->rgbtGreen * GX[i];
                 gx_bsum += pixel->rgbtBlue * GX[i];
+                
                 gy_rsum += pixel->rgbtRed * GY[i];
                 gy_gsum += pixel->rgbtGreen * GY[i];
                 gy_bsum += pixel->rgbtBlue * GY[i];
+
             }
+
             // Write values to edge enhanced image
             pixel = &img_edge[y][x];
-            pixel->rgbtRed = sqrt(gx_rsum * gx_rsum + gy_rsum * gy_rsum);
-            pixel->rgbtGreen = sqrt(gx_gsum * gx_gsum + gy_gsum * gy_gsum);
-            pixel->rgbtBlue = sqrt(gx_bsum * gx_bsum + gy_bsum * gy_bsum);
+            int r_val = lround(sqrt(gx_rsum * gx_rsum + gy_rsum * gy_rsum));
+            int g_val = lround(sqrt(gx_gsum * gx_gsum + gy_gsum * gy_gsum));
+            int b_val = lround(sqrt(gx_bsum * gx_bsum + gy_bsum * gy_bsum));
+
+            // Cap values at 255
+            pixel->rgbtRed = r_val > 255 ? 255 : r_val;
+            pixel->rgbtGreen = g_val > 255 ? 255: g_val;
+            pixel->rgbtBlue = b_val > 255 ? 255: b_val;
         }
     }
 
