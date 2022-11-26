@@ -23,15 +23,32 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    int counter = 0;
     uint8_t buffer[BLOCK_SIZE];
-    while(fread(buffer, 1, BLOCK_SIZE, raw_img) == BLOCK_SIZE)
+    char fname[25];
+    int counter = 0;
+    while (fread(buffer, 1, BLOCK_SIZE, raw_img) == BLOCK_SIZE)
     {
-        if(jpg_start(buffer))
+        if (jpg_start(buffer))
         {
             counter++;
-            if (counter > 1) printf("%d jpegs found.\n", counter);
-            else printf("%d jpeg found.\n", counter);
+
+            sprintf(fname, "%.3d.jpg\0", counter);
+            FILE *out_jpg = fopen(fname, "w");
+            if (!out_jpg)
+            {
+                printf("Unable to open output file.\n");
+                return 1;
+            }
+            
+            fwrite(buffer, 1, BLOCK_SIZE, out_jpg);
+            // Leaves the file pointer past the start of next jpeg
+            while (fread(buffer, 1, BLOCK_SIZE, raw_img) == BLOCK_SIZE && !jpg_start(buffer))
+            {
+                fwrite(buffer, 1, BLOCK_SIZE, out_jpg);
+            }
+            fclose(out_jpg);
+            // Moves the file pointer back to start of next jpeg
+            fseek(raw_img, -BLOCK_SIZE, SEEK_CUR);
         }
     }
 
@@ -41,8 +58,8 @@ int main(int argc, char *argv[])
 
 int jpg_start(const uint8_t block[BLOCK_SIZE])
 {
-    uint32_t block_start =  (block[0] << 24) | (block[1] << 16) | 
-                            (block[2] << 8)  | (block[3] & 0xf0);
+
+    uint32_t block_start = (block[0] << 24) | (block[1] << 16) | (block[2] << 8) | (block[3] & 0xf0);
 
     return signature == block_start;
 }
