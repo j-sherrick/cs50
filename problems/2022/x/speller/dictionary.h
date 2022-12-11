@@ -9,7 +9,7 @@
 // (e.g., pneumonoultramicroscopicsilicovolcanoconiosis)
 #define LENGTH 45
 
-#define HASH_MAX 50000
+#define HASH_MAX 100000
 
 // Represents a node in a hash table
 typedef struct node

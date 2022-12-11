@@ -48,7 +48,7 @@ unsigned int hash(const char *word)
     for (int i = 0; word[i] != '\0'; ++i)
     {
         f = i + 1;
-        hashcode += (tolower(word[i]) - 'a' + 1) * (f * f * f);
+        hashcode += (tolower(word[i]) - 'a' + 1) * (f * f * f * f);
     }
     return hashcode % HASH_MAX;
 }
